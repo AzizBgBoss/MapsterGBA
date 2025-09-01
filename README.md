@@ -1,4 +1,5 @@
 # MapsterGBA
+[![Downloads](https://img.shields.io/github/downloads/AzizBgBoss/MapsterGBA/total.svg?label=downloads)](https://github.com/AzizBgBoss/MapsterGBA/releases)<br><br>
 Mapster is a farming game I made long ago, and I try to port it to as many platforms as I could.<br>
 Now I ported it to the GBA in 1 week! (it's more like a remake)<br>
 I poured the most effort into the GBA version, I hope you like it!<br>
