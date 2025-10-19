@@ -162,12 +162,13 @@ void BgInitMem(void)
 }
 //---------------------------------------------------------------------------
 void BgInit(void)
-{	irqInit();
+{
+  irqInit();
 
-	// Maxmod requires the vblank interrupt to reset sound DMA.
-	// Link the VBlank interrupt to mmVBlank, and enable it. 
-	irqSet( IRQ_VBLANK, mmVBlank );
-	irqEnable(IRQ_VBLANK);
+  // Maxmod requires the vblank interrupt to reset sound DMA.
+  // Link the VBlank interrupt to mmVBlank, and enable it.
+  irqSet(IRQ_VBLANK, mmVBlank);
+  irqEnable(IRQ_VBLANK);
   BgInitMem();
 
   REG_DISPCNT = (MODE_0 | BG0_ON | BG1_ON | BG2_ON | BG3_ON);
@@ -311,13 +312,19 @@ void showNotice(const char *text)
   Bg2SetTile(SCREEN_TILE_WIDTH - 1, SCREEN_TILE_HEIGHT - 2, 22);
   Bg2SetTile(SCREEN_TILE_WIDTH - 1, SCREEN_TILE_HEIGHT - 1, 30);
 
-
   for (int x = 1; x < SCREEN_TILE_WIDTH - 1; x++)
   {
     Bg2SetTile(x, SCREEN_TILE_HEIGHT - 4, 13);
     Bg2SetTile(x, SCREEN_TILE_HEIGHT - 3, 21);
     Bg2SetTile(x, SCREEN_TILE_HEIGHT - 2, 21);
     Bg2SetTile(x, SCREEN_TILE_HEIGHT - 1, 29);
+  }
+  for (int x = 0; x < SCREEN_TILE_WIDTH; x++)
+  {
+    Bg3SetTile(x, SCREEN_TILE_HEIGHT - 4, 0xF);
+    Bg3SetTile(x, SCREEN_TILE_HEIGHT - 3, 0xF);
+    Bg3SetTile(x, SCREEN_TILE_HEIGHT - 2, 0xF);
+    Bg3SetTile(x, SCREEN_TILE_HEIGHT - 1, 0xF);
   }
   print(0, SCREEN_TILE_HEIGHT - 4, text);
 }
@@ -483,7 +490,7 @@ void changeTreeAge(int x, int y, uint8_t newAge)
 
 void waitForKeyPress()
 {
-  delay(1000);    
+  delay(1000);
   Bg3SetTile(SCREEN_TILE_WIDTH - 3, SCREEN_TILE_HEIGHT - 2, 0xF);
   Bg3SetTile(SCREEN_TILE_WIDTH - 2, SCREEN_TILE_HEIGHT - 2, 39); // Show the A button icon
   while (1)
@@ -495,7 +502,7 @@ void waitForKeyPress()
       break; // Exit the loop when any key is pressed
     }
     WaitForVsync(); // Wait for the next frame to avoid busy-waiting
-    mmFrame(); // Update the music
+    mmFrame();      // Update the music
   }
 }
 
@@ -623,12 +630,12 @@ void interact(uint8_t x, uint8_t y)
     strcpy(noticeText, "\0"); // Clear the notice text so it doesn't show the previous notice
 
     const char *tutorialText[13] = {// Don't mention villagers since the tiles are just icons of the items and will be confusing, we can just call them shops.
-                                    "Welcome to Mapster! A game made by AzizBgBoss, whose mission is to port it to all kind of devices!",
+                                    "Welcome to Mapster! A game made by AzizBgBoss, whose mission is to port it to all kind of devices!\n\n\nVersion 1.1",
                                     "In this game, you are a farmer! Your mission is to grow trees, collect fruits, and make money! You can also interact with all kind of shops to help you in your journey!",
                                     "Use your D-Pad to move, and press A to interact with the map elements. Press START to pause the game, and SELECT to toggle music while paused.\n\nTo start, there are different kind of items and shops you need to understand:",
                                     "1. Seeds: On the top bar, you have a seed counter \x83 that represents how many seeds you have. You can buy seeds from the Seed Shop (\x83 icon) for 3 coins \x82 each. You can plant seeds on empty farmland tiles (\x84) to grow trees.",
                                     "2. Hoes: On the top bar, you have a hoe counter \x86 that represents how many hoes you have. You can buy hoes from the Hoe Shop (\x86 icon) for 10 \x82 coins each. You can use hoes to turn normal ground tiles (\x80) to farmland tiles (\x84) to plant trees.",
-                                    "3. Fruits: On the top bar, you have a fruit counter \x85 that represents how many fruits you have. You can sell fruits to the Fruit Shop (\x85 icon) for 3 to 7 coins \x82 for each 3 fruits \x86.",
+                                    "3. Fruits: On the top bar, you have a fruit counter \x85 that represents how many fruits you have. You can sell fruits to the Fruit Shop (\x85 icon) for 3 to 7 coins \x82 for each 3 fruits \x85.",
                                     "4. Water: On the top bar, you have a water counter \x87 that represents how much water you have in Liters. You can buy water from the Water Shop (\x87 icon) for 1 \x82 coin each 1000 liters of water \x87.",
                                     "Each tree consumes 1 liter of water \x87 per second, and it can grow to a maximum of 3 ages, each age has a different size and appearance and gives different amount of fruits when harvested.\n\
 And that's why you need to keep your water reserves high, other wise the trees will get smaller and die!\n\
@@ -638,23 +645,23 @@ Trees grow up in the following order: \n\
 Same with the Super Strong Blue trees, if you're even more lucky, they can turn into Ultimate Instinct trees \xA4, which will give you even more fruits when harvested!",
                                     "Trees don't consume water \x87 when they grow up \xA2. The special trees \xA3\xA4 will only consume water \x87 when they transform to their state. Then these trees can be harvested for fruits \x85!",
                                     "Finally, you can save your game progress by interacting with the Save \x8A icon and load it later from the Load \x8B icon.",
-                                    "I'm sure you will enjoy this game, and I hope you have fun playing it! I'm really fond of programming and it's my favourite hobby. If you have any questions or suggestions, feel free to make an issue or contribute on the GitHub repository:\n\nhttps://https://github.com/AzizBgBoss/mapster/",
+                                    "I'm sure you will enjoy this game, and I hope you have fun playing it! I'm really fond of programming and it's my favourite hobby. If you have any questions or suggestions, feel free to make an issue or contribute on the GitHub repository:\n\nhttps://github.com/AzizBgBoss/MapsterGBA/",
                                     "Credits:\n\nDeveloper: AzizBgBoss\nSprites: AzizBgBoss\nMusic: DevKitPro's GBA audio example - FlatOutLies by Neil D Voss (1993)\n\nThanks to:\n\n- DevKitPro for the GBA development tools.\n- The gbadev discord server for helping me with the rendering system of the game.\nThanks for playing Mapster!"};
 
     // Draw borders
-    Bg2SetTile(0, 3, 12); // Top left corner
-    Bg2SetTile(SCREEN_TILE_WIDTH - 1, 3, 14); // Top right corner
-    Bg2SetTile(0, SCREEN_TILE_HEIGHT - 1, 28); // Bottom left corner
+    Bg2SetTile(0, 3, 12);                                          // Top left corner
+    Bg2SetTile(SCREEN_TILE_WIDTH - 1, 3, 14);                      // Top right corner
+    Bg2SetTile(0, SCREEN_TILE_HEIGHT - 1, 28);                     // Bottom left corner
     Bg2SetTile(SCREEN_TILE_WIDTH - 1, SCREEN_TILE_HEIGHT - 1, 30); // Bottom right corner
     // borders
     for (int i = 4; i < SCREEN_TILE_HEIGHT - 2; i++)
     {
-      Bg2SetTile(0, i, 20); // Left border
+      Bg2SetTile(0, i, 20);                     // Left border
       Bg2SetTile(SCREEN_TILE_WIDTH - 1, i, 22); // Right border
     }
     for (int i = 1; i < SCREEN_TILE_WIDTH - 1; i++)
     {
-      Bg2SetTile(i, 3, 13); // Top border
+      Bg2SetTile(i, 3, 13);                      // Top border
       Bg2SetTile(i, SCREEN_TILE_HEIGHT - 1, 29); // Bottom
     }
 
@@ -750,46 +757,50 @@ void loop()
   }
 
   if (keysDown() & KEY_START)
-{
-  showNotice("Paused. Press START to continue.\nPress SELECT to toggle music.");
-  while (keysHeld() & KEY_START) {
-    WaitForVsync(); // Wait for the next frame to avoid busy-waiting
-    mmFrame(); // Update the music
-    scanKeys(); // Wait until the START key is released
-  }
-
-  while (1)
   {
-    scanKeys();
-
-    if (keysHeld() & KEY_START) {
-      while (keysHeld() & KEY_START) {
-        WaitForVsync(); // Wait for the next frame to avoid busy-waiting
-        mmFrame(); // Update the music
-        scanKeys(); // Wait until the START key is released
-      }
-      break;
-    }
-
-    if (keysHeld() & KEY_SELECT)
+    showNotice("Paused. Press START to continue.\nPress SELECT to toggle music.");
+    while (keysHeld() & KEY_START)
     {
-      while (keysHeld() & KEY_SELECT) {
-        WaitForVsync(); // Wait for the next frame to avoid busy-waiting
-        mmFrame(); // Update the music
-        scanKeys(); // Wait until the SELECT key is released
-      }
-      if (mmActive())
-        mmPause();
-      else
-        mmResume();
+      WaitForVsync(); // Wait for the next frame to avoid busy-waiting
+      mmFrame();      // Update the music
+      scanKeys();     // Wait until the START key is released
     }
 
-    WaitForVsync();
-    mmFrame();
-  }
+    while (1)
+    {
+      scanKeys();
 
-  hideNotice();
-}
+      if (keysHeld() & KEY_START)
+      {
+        while (keysHeld() & KEY_START)
+        {
+          WaitForVsync(); // Wait for the next frame to avoid busy-waiting
+          mmFrame();      // Update the music
+          scanKeys();     // Wait until the START key is released
+        }
+        break;
+      }
+
+      if (keysHeld() & KEY_SELECT)
+      {
+        while (keysHeld() & KEY_SELECT)
+        {
+          WaitForVsync(); // Wait for the next frame to avoid busy-waiting
+          mmFrame();      // Update the music
+          scanKeys();     // Wait until the SELECT key is released
+        }
+        if (mmActive())
+          mmPause();
+        else
+          mmResume();
+      }
+
+      WaitForVsync();
+      mmFrame();
+    }
+
+    hideNotice();
+  }
 
   // Now move
   if (up)
@@ -947,6 +958,8 @@ void loop()
             snprintf(buffer, sizeof(buffer), "Ultimate Instinct tree %c! It gives about 50 to 100 fruits %c!", (char)(-128 + 36), (char)(-128 + 5)); // Ultra Instinct tree tile and fruit tile
             showNotice(buffer);
           }
+          else
+            hideNotice();
           break;
         default:
           hideNotice(); // Hide the notice if not interacting with any element
@@ -1060,7 +1073,7 @@ int main(void)
   changeTax(0);
   changeTaxTime(200);
 
-  showNotice("Welcome to Mapster by AzizbgBoss! Press A to continue...");
+  showNotice("Welcome to Mapster v1.1 by AzizbgBoss! Press A to continue...");
   waitForKeyPress();
   showNotice("Move with the D-Pad and press A to interact with the map elements.");
   waitForKeyPress();
@@ -1068,10 +1081,10 @@ int main(void)
   waitForKeyPress();
   hideNotice();
 
-  mmInitDefault( (mm_addr)soundbank_bin, 8 );
+  mmInitDefault((mm_addr)soundbank_bin, 8);
 
-	// Start playing module
-	mmStart( MOD_FLATOUTLIES, MM_PLAY_LOOP );
+  // Start playing module
+  mmStart(MOD_FLATOUTLIES, MM_PLAY_LOOP);
   for (;;)
   {
     WaitForVsync();
